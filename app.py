@@ -14,6 +14,11 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['FREEZER_RELATIVE_URLS'] = True
+
+# Aggiungi questa configurazione per GitHub Pages
+if os.environ.get('GITHUB_PAGES'):
+    app.config['APPLICATION_ROOT'] = '/MovieMatch'
 
 TMDB_API_KEY = os.getenv('VITE_TMDB_API_KEY')
 TMDB_ACCESS_TOKEN = os.getenv('VITE_TMDB_ACCESS_TOKEN')
