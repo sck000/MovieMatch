@@ -1,6 +1,16 @@
 from flask_frozen import Freezer
 from app import app
 import os
+import shutil
+
+# Ensure the build directory exists
+if not os.path.exists('build'):
+    os.makedirs('build')
+
+# Copy the database to the build directory
+if os.path.exists('instance/movies.db'):
+    os.makedirs('build/instance', exist_ok=True)
+    shutil.copy2('instance/movies.db', 'build/instance/movies.db')
 
 os.environ['GITHUB_PAGES'] = 'true'
 
