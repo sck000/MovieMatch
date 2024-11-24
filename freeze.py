@@ -1,31 +1,67 @@
 from flask_frozen import Freezer
-from app import app
+from app import app, db
 import os
 import shutil
+import sys
 
-# Ensure the build directory exists
-if not os.path.exists('build'):
-    os.makedirs('build')
+def setup_build_directory():
+    """Setup the build directory and copy necessary files."""
+    print("Setting up build directory...")
+    if not os.path.exists('build'):
+        os.makedirs('build')
+        print("Created build directory")
 
-# Copy the database to the build directory
-if os.path.exists('instance/movies.db'):
-    os.makedirs('build/instance', exist_ok=True)
-    shutil.copy2('instance/movies.db', 'build/instance/movies.db')
+    # Copy static files
+    if os.path.exists('static'):
+        shutil.copytree('static', 'build/static', dirs_exist_ok=True)
+        print("Copied static files")
 
-os.environ['GITHUB_PAGES'] = 'true'
+    # Copy database
+    if os.path.exists('instance/movies.db'):
+        os.makedirs('build/instance', exist_ok=True)
+        shutil.copy2('instance/movies.db', 'build/instance/movies.db')
+        print("Copied database")
 
-app.config['FREEZER_DESTINATION'] = 'build'
-app.config['FREEZER_BASE_URL'] = 'https://sck000.github.io/MovieMatch/'
-app.config['FREEZER_RELATIVE_URLS'] = True
+def configure_app():
+    """Configure the Flask app for freezing."""
+    print("Configuring Flask app...")
+    os.environ['GITHUB_PAGES'] = 'true'
+    
+    app.config['FREEZER_DESTINATION'] = 'build'
+    app.config['FREEZER_BASE_URL'] = 'https://sck000.github.io/MovieMatch/'
+    app.config['FREEZER_RELATIVE_URLS'] = True
+    
+    return Freezer(app)
 
-freezer = Freezer(app)
+def generate_urls(freezer):
+    """Register URL generators for Frozen-Flask."""
+    @freezer.register_generator
+    def movie_details():
+        # Get all movie IDs from the database
+        with app.app_context():
+            try:
+                from models.movie import Movie
+                movies = Movie.query.all()
+                for movie in movies:
+                    yield {'movie_id': movie.id}
+            except Exception as e:
+                print(f"Error generating movie URLs: {e}")
+                return []
 
-@freezer.register_generator
-def movie_details():
-    # Generate URLs for movie details pages
-    # This is just an example, you might want to adjust based on your actual movies
-    for movie_id in range(1, 1000):  # Generate for first 1000 movies
-        yield {'movie_id': movie_id}
+def main():
+    try:
+        setup_build_directory()
+        freezer = configure_app()
+        generate_urls(freezer)
+        
+        print("Starting to freeze app...")
+        freezer.freeze()
+        print("Successfully froze the app!")
+        return 0
+        
+    except Exception as e:
+        print(f"Error freezing app: {e}", file=sys.stderr)
+        return 1
 
 if __name__ == '__main__':
-    freezer.freeze()
+    sys.exit(main())
