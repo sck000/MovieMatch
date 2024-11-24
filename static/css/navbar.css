@@ -1,0 +1,137 @@
+/* Navbar Styles */
+.navbar {
+    background-color: var(--background);
+    box-shadow: var(--shadow-md);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.navbar .nav-content {
+    max-width: var(--max-width);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.navbar .logo i {
+    font-size: 1.8rem;
+}
+
+.navbar .logo:hover {
+    color: var(--primary-dark);
+}
+
+.navbar .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.navbar .nav-link i {
+    font-size: 1.2rem;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width 0.2s ease;
+}
+
+.navbar .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Mobile Navigation */
+.navbar .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .navbar .mobile-menu-btn {
+        display: block;
+    }
+
+    .navbar .nav-links {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        background-color: var(--background);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+        box-shadow: var(--shadow-md);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .navbar .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .navbar .nav-link {
+        width: 100%;
+        padding: 0.75rem;
+        justify-content: center;
+    }
+
+    .navbar .nav-link::after {
+        display: none;
+    }
+}
